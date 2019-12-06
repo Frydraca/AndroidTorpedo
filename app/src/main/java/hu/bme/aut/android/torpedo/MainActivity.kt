@@ -71,7 +71,7 @@ class MainActivity : BaseActivity() {
             .addOnSuccessListener {
                 hideProgressDialog()
 
-                startActivity(Intent(this@MainActivity, LobbyBrowserActivity::class.java))
+                startActivity(Intent(this@MainActivity, BrowserActivity::class.java))
                 finish()
             }
             .addOnFailureListener { exception ->

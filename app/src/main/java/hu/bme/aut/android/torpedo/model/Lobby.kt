@@ -1,9 +1,11 @@
 package hu.bme.aut.android.torpedo.model
 
 class Lobby (
-    var lobbyName: String,
-    var hostName: String,
-    var hasPassword: Boolean,
-    var password: String
+    var lobbyID: String? = null,
+    var lobbyName: String? = null,
+    var firstPlayerName: String? = null,
+    var secondPlayerName: String? = null,
+    var hasPassword: Boolean = false,
+    var password: String? = null
 ){}
 

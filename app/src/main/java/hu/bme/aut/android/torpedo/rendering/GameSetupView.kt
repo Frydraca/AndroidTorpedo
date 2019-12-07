@@ -13,7 +13,7 @@ class GameSetupView : SurfaceView {
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    private var renderLoop: RenderLoop? = null
+    var renderLoop: RenderLoop? = null
 
     init {
         holder.addCallback(object : SurfaceHolder.Callback {
@@ -49,5 +49,6 @@ class GameSetupView : SurfaceView {
         renderLoop!!.squareClicked(event!!.x, event!!.y)
         return true
     }
+
 
 }

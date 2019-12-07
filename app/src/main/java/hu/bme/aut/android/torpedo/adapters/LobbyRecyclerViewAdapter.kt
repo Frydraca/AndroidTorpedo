@@ -1,5 +1,6 @@
 package hu.bme.aut.android.torpedo.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,7 +44,7 @@ class LobbyRecyclerViewAdapter() : RecyclerView.Adapter<LobbyRecyclerViewAdapter
         viewHolder.lobby = tmpLobby
 
         viewHolder.tvTitle.text = tmpLobby.lobbyName
-        viewHolder.tvBody.text = tmpLobby.hostName
+        viewHolder.tvBody.text = tmpLobby.firstPlayerName
 
     }
 
@@ -53,9 +54,21 @@ class LobbyRecyclerViewAdapter() : RecyclerView.Adapter<LobbyRecyclerViewAdapter
         fun onItemClick(lobby: Lobby)
     }
 
-    fun addAll(lobbies: List<Lobby>) {
-        val size = lobbies.size
-        lobbyList += lobbies
-        notifyItemRangeInserted(size, lobbies.size)
+    fun add(newLobby: Lobby) {
+        Log.w("LOBBY", "Add")
+        lobbyList.add(newLobby)
+        notifyDataSetChanged()
+    }
+
+    fun update(modifiedLobby: Lobby) {
+        val index = lobbyList.indexOfFirst { oldLobby -> oldLobby.lobbyID == modifiedLobby.lobbyID }
+        lobbyList[index] = modifiedLobby
+        notifyItemChanged(index)
+    }
+
+    fun delete(deletedLobby: Lobby) {
+        val index = lobbyList.indexOfFirst { oldLobby -> oldLobby.lobbyID == deletedLobby.lobbyID }
+        lobbyList.remove(deletedLobby)
+        notifyItemRemoved(index)
     }
 }

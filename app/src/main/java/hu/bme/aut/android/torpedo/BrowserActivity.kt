@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import hu.bme.aut.android.torpedo.adapters.LobbyRecyclerViewAdapter
 import hu.bme.aut.android.torpedo.model.Lobby
@@ -28,32 +29,57 @@ class BrowserActivity : AppCompatActivity(), LobbyRecyclerViewAdapter.LobbyItemC
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_browser)
 
+        db.collection("lobbies")
+            .addSnapshotListener { result, e ->
 
+                if (e != null) {
+                    //Log.w("LOBBY", "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+                for (change in result!!.documentChanges) {
+                    when (change.type) {
+                        DocumentChange.Type.ADDED -> {
+                            Log.w("LOBBY", "casting")
+                            var newLobby = change.document.toObject(
+                                Lobby::class.java
+                            )
+                            Log.w("LOBBY", "Listen failed: ${newLobby.lobbyName}")
+                            newLobby.lobbyID = change.document.id
+                            lobbyRecyclerViewAdapter.add(newLobby)
+                        }
+                        DocumentChange.Type.MODIFIED -> {
+                            var modifiedLobby = change.document.toObject(
+                                Lobby::class.java
+                            )
+                            modifiedLobby.lobbyID = change.document.id
+                            lobbyRecyclerViewAdapter.update(modifiedLobby)
+                        }
+                        DocumentChange.Type.REMOVED -> {
+                            var deletedLobby = change.document.toObject(
+                                Lobby::class.java
+                            )
+                            deletedLobby.lobbyID = change.document.id
+                            lobbyRecyclerViewAdapter.delete(deletedLobby)
+                        }
+                    }
+                }
+            }
 
         button_createLobby = findViewById(R.id.createLobby) as Button
 
         button_createLobby.setOnClickListener {
-//            val demoData = mutableListOf(
-//                Lobby("title1", "Axi", false, "description1")
-//            )
-            val lobby = hashMapOf(
-                "name" to "Lobby1",
-                "hostName" to "Axi",
-                "password" to "",
-                "hasPassword" to false
-            )
-            db.collection("lobbies")
-                .add(lobby)
-                .addOnSuccessListener { documentReference ->
-                    Log.d("LOBBY", "DocumentSnapshot added with ID: ${documentReference.id}")
-                }
-                .addOnFailureListener { e ->
-                    Log.w("LOBBY", "Error adding document", e)
-                }
 
-            db.collection("lobbies")
-                .get()
-//            lobbyRecyclerViewAdapter.addAll(demoData)
+//            val lobby = hashMapOf(
+//                "lobbyName" to "Lobby1",
+//                "firstPlayerName" to "Axi",
+//                "secondPlayerName" to "Andris",
+//                "hasPassword" to false,
+//                "password" to ""
+//
+//            )
+//            db.collection("lobbies")
+//                .add(lobby)
+
         }
         setupRecyclerView()
     }

@@ -27,9 +27,11 @@ android:orientation="vertical">
     </LinearLayout>
 
     <hu.bme.aut.android.torpedo.rendering.GameSetupView
-        android:id="@+id/gameView"
+        android:id="@+id/setup_gameView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+
 
 
 </LinearLayout>

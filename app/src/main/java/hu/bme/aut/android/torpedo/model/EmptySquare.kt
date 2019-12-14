@@ -42,18 +42,16 @@ class EmptySquare(private val context: Context) : Renderable {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun setImage()
+    override fun setImage(newState: Int)
     {
-        if(state == 0)
+        if(newState == 0)
         {
-            state = 2
+            image = BitmapFactory.decodeResource(context.resources, R.drawable.empty)
+        }
+        else if(newState == 2)
+        {
             image = BitmapFactory.decodeResource(context.resources, R.drawable.ship)
         }
-//        else if(state == 2)
-//        {
-//            state = 0
-//            image = BitmapFactory.decodeResource(context.resources, R.drawable.empty)
-//        }
 
     }
 

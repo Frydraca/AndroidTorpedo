@@ -5,40 +5,40 @@
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
-<!--    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:gravity="center_horizontal"-->
-<!--        android:orientation="horizontal">-->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
 
-<!--        <Button-->
-<!--            android:id="@+id/game_resignButton"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="1"-->
-<!--            android:text="Resign" />-->
+        <Button
+            android:id="@+id/game_resignButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Resign" />
 
-<!--        <Button-->
-<!--            android:id="@+id/setup_send"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="1"-->
-<!--            android:text="Send" />-->
-<!--    </LinearLayout>-->
+        <Button
+            android:id="@+id/game_send"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Send" />
+    </LinearLayout>
 
-<!--    <hu.bme.aut.android.torpedo.rendering.GameSetupView-->
-<!--        android:id="@+id/gameView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"/>-->
+    <Button
+        android:id="@+id/switch_gameboard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center|bottom"
+        android:text="Switch gameboard" />
 
-<!--    <EditText-->
-<!--        android:id="@+id/inNumber"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_margin="8dp"-->
-<!--        android:hint="2"-->
-<!--        android:imeOptions="actionNext"-->
-<!--        android:inputType="number" />-->
+
+    <hu.bme.aut.android.torpedo.rendering.GameSetupView
+        android:id="@+id/gameView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
 
 
 </LinearLayout>

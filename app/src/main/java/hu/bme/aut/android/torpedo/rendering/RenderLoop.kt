@@ -10,7 +10,7 @@ class RenderLoop(
     width: Int,
     height: Int
 ) : Thread() {
-    private val renderer = Renderer(context, width, height)
+    val renderer = Renderer(context, width, height)
 
     var running = false
 
@@ -28,7 +28,7 @@ class RenderLoop(
         try {
             canvas = view.holder.lockCanvas()
             synchronized(view.holder) {
-                Log.d("DRAW","calling draw")
+
                 renderer.draw(canvas)
             }
         } finally {

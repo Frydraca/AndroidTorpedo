@@ -15,12 +15,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import hu.bme.aut.android.torpedo.adapters.LobbyRecyclerViewAdapter
 import hu.bme.aut.android.torpedo.model.Lobby
 import kotlinx.android.synthetic.main.activity_browser.*
 
 class BrowserActivity : AppCompatActivity(), LobbyRecyclerViewAdapter.LobbyItemClickListener {
 
+    private lateinit var registration: ListenerRegistration
     private lateinit var lobbyRecyclerViewAdapter: LobbyRecyclerViewAdapter
     private lateinit var button_createLobby: Button
     val db = FirebaseFirestore.getInstance()
@@ -29,7 +31,32 @@ class BrowserActivity : AppCompatActivity(), LobbyRecyclerViewAdapter.LobbyItemC
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_browser)
 
-        db.collection("lobbies")
+
+        setupRecyclerView()
+    }
+
+    private fun setupRecyclerView() {
+        lobbyRecyclerViewAdapter = LobbyRecyclerViewAdapter()
+        rvApplications.layoutManager =  LinearLayoutManager(this).apply {
+                reverseLayout = true
+                stackFromEnd = true
+            }
+        rvApplications.adapter = lobbyRecyclerViewAdapter
+        lobbyRecyclerViewAdapter.itemClickListener = this
+    }
+
+    override fun onItemClick(lobby: Lobby) {
+        val intent = Intent(this, LobbyActivity::class.java)
+        intent.putExtra("lobbyName", lobby.lobbyName)
+        intent.putExtra("oppName", lobby.firstPlayerName)
+        intent.putExtra("player", "second")
+        startActivity(intent)
+
+    }
+
+    override  fun onStart()
+    {
+        registration = db.collection("lobbies")
             .addSnapshotListener { result, e ->
 
                 if (e != null) {
@@ -39,11 +66,9 @@ class BrowserActivity : AppCompatActivity(), LobbyRecyclerViewAdapter.LobbyItemC
                 for (change in result!!.documentChanges) {
                     when (change.type) {
                         DocumentChange.Type.ADDED -> {
-                            Log.w("LOBBY", "casting")
                             var newLobby = change.document.toObject(
                                 Lobby::class.java
                             )
-                            Log.w("LOBBY", "Listen failed: ${newLobby.lobbyName}")
                             newLobby.lobbyID = change.document.id
                             lobbyRecyclerViewAdapter.add(newLobby)
                         }
@@ -69,34 +94,41 @@ class BrowserActivity : AppCompatActivity(), LobbyRecyclerViewAdapter.LobbyItemC
 
         button_createLobby.setOnClickListener {
 
-//            val lobby = hashMapOf(
-//                "lobbyName" to "Lobby1",
-//                "firstPlayerName" to "Axi",
-//                "secondPlayerName" to "Andris",
-//                "hasPassword" to false,
-//                "password" to ""
-//
-//            )
-//            db.collection("lobbies")
-//                .add(lobby)
+            val lobby = hashMapOf(
+                "lobbyName" to "Lobby1",
+                "firstPlayerName" to "Axi",
+                "secondPlayerName" to "Andris",
+                "hasPassword" to false,
+                "password" to "",
+                "firstPlayerReady" to false,
+                "secondPlayerReady" to false,
+                "gameID" to "Game1"
+
+            )
+            db.collection("lobbies").document("Lobby1").set(lobby)
+
+            val gameHash = hashMapOf(
+                "player1" to "Axi",
+                "player2" to "Andris",
+                "firstPlayerTurn" to true,
+                "squares" to "",
+                "squares2" to ""
+            )
+
+            db.collection("games").document("Game1").set(gameHash)
+
+            val intent = Intent(this, LobbyActivity::class.java)
+            intent.putExtra("lobbyName", "Lobby1")
+            intent.putExtra("player", "first")
+            startActivity(intent)
 
         }
-        setupRecyclerView()
-    }
 
-    private fun setupRecyclerView() {
-        lobbyRecyclerViewAdapter = LobbyRecyclerViewAdapter()
-        rvApplications.layoutManager =  LinearLayoutManager(this).apply {
-                reverseLayout = true
-                stackFromEnd = true
-            }
-        rvApplications.adapter = lobbyRecyclerViewAdapter
-        lobbyRecyclerViewAdapter.itemClickListener = this
+        super.onStart()
     }
-
-    override fun onItemClick(lobby: Lobby) {
-        val intent = Intent(this, GameSetupActivity::class.java)
-        startActivity(intent)
+    override fun onStop() {
+        registration.remove()
+        super.onStop()
 
     }
 

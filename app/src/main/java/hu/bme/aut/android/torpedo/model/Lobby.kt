@@ -6,6 +6,9 @@ class Lobby (
     var firstPlayerName: String? = null,
     var secondPlayerName: String? = null,
     var hasPassword: Boolean = false,
-    var password: String? = null
+    var password: String? = null,
+    var firstPlayerReady: Boolean = false,
+    var secondPlayerReady: Boolean = false,
+    var gameID: String? = null
 ){}
 

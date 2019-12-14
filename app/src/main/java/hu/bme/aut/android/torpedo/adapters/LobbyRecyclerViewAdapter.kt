@@ -55,7 +55,6 @@ class LobbyRecyclerViewAdapter() : RecyclerView.Adapter<LobbyRecyclerViewAdapter
     }
 
     fun add(newLobby: Lobby) {
-        Log.w("LOBBY", "Add")
         lobbyList.add(newLobby)
         notifyDataSetChanged()
     }

@@ -9,16 +9,17 @@ import android.widget.Toast
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.MetadataChanges
 import hu.bme.aut.android.torpedo.model.Game
 import hu.bme.aut.android.torpedo.model.Lobby
 import kotlinx.android.synthetic.main.activity_game_setup.*
+import kotlinx.android.synthetic.main.activity_lobby.*
 
-class GameSetupActivity : AppCompatActivity() {
+class GameSetupActivity : BaseActivity() {
 
     private lateinit var registration: ListenerRegistration
     val db = FirebaseFirestore.getInstance()
-    var lobbyName: String? = null
-    var gameName: String? = null
+    var lobbyId: String = ""
     var firstplayer: Boolean = false
     var firstPlayerReady: Boolean = false
     var secondPlayerReady: Boolean = false
@@ -27,73 +28,62 @@ class GameSetupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_setup)
 
-        lobbyName = intent.getStringExtra("lobbyName")
-        gameName = intent.getStringExtra("gameName")
+        lobbyId = intent.getStringExtra("lobbyId")!!
         if(intent.getStringExtra("player") == "first")
         {
             firstplayer = true
             setup_gameView.renderLoop!!.renderer.isFirstPlayer = true
         }
 
-        db.collection("lobbies").document(lobbyName!!)
+        db.collection("lobbies").document(lobbyId)
             .get()
             .addOnSuccessListener { document ->
                 var modifiedLobby = document.toObject(
                     Lobby::class.java)
                 modifiedLobby!!.firstPlayerReady = false
                 modifiedLobby!!.secondPlayerReady = false
-                db.collection("lobbies").document(lobbyName!!)
+                db.collection("lobbies").document(lobbyId)
                     .set(modifiedLobby)
             }
 
         setup_readyButton.setOnClickListener {
 
-            val game = setup_gameView.renderLoop!!.renderer.getbackGame()
-
+            val game = setup_gameView.renderLoop!!.renderer.lobby
             if(firstplayer)
             {
-                db.collection("games").document(gameName!!)
-                    .get()
-                    .addOnSuccessListener { document ->
-                        var modifiedGame = document.toObject(
-                            Game::class.java)
-                        modifiedGame!!.squares = game.squares
-                        modifiedGame!!.squaresSeen1 = game.squaresSeen1
-                        db.collection("games").document(gameName!!)
-                            .set(modifiedGame)
-                    }
-
-                db.collection("lobbies").document(lobbyName!!)
+                db.collection("lobbies").document(lobbyId)
                     .get()
                     .addOnSuccessListener { document ->
                         var modifiedLobby = document.toObject(
                             Lobby::class.java)
+                        modifiedLobby!!.squares = game.squares
+                        modifiedLobby!!.squaresSeen1 = game.squaresSeen1
                         modifiedLobby!!.firstPlayerReady = true
-                        db.collection("lobbies").document(lobbyName!!)
+
+                        if(modifiedLobby.firstPlayerReady && modifiedLobby.secondPlayerReady)
+                        {
+                            startGame()
+                        }
+                        db.collection("lobbies").document(lobbyId)
                             .set(modifiedLobby)
                     }
             }
             else
             {
-
-                db.collection("games").document("Game1")
-                    .get()
-                    .addOnSuccessListener { document ->
-                        var modifiedGame = document.toObject(
-                            Game::class.java)
-                        modifiedGame!!.squares2 = game.squares
-                        modifiedGame!!.squaresSeen2 = game.squaresSeen2
-                        db.collection("games").document(gameName!!)
-                            .set(modifiedGame)
-                    }
-
-                db.collection("lobbies").document(lobbyName!!)
+                db.collection("lobbies").document(lobbyId)
                     .get()
                     .addOnSuccessListener { document ->
                         var modifiedLobby = document.toObject(
                             Lobby::class.java)
+                        modifiedLobby!!.squares2 = game.squares
+                        modifiedLobby!!.squaresSeen2 = game.squaresSeen2
                         modifiedLobby!!.secondPlayerReady = true
-                        db.collection("lobbies").document(lobbyName!!)
+
+                        if(modifiedLobby.firstPlayerReady && modifiedLobby.secondPlayerReady)
+                        {
+                            startGame()
+                        }
+                        db.collection("lobbies").document(lobbyId)
                             .set(modifiedLobby)
                     }
             }
@@ -129,25 +119,22 @@ class GameSetupActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         registration = db.collection("lobbies")
-            .whereEqualTo("lobbyName", lobbyName)
-            .addSnapshotListener { result, e ->
-                for (change in result!!.documentChanges) {
-                    when (change.type) {
-                        DocumentChange.Type.MODIFIED -> {
-                            var modifiedLobby = change.document.toObject(
-                                Lobby::class.java
-                            )
-                            firstPlayerReady = modifiedLobby.firstPlayerReady
-                            secondPlayerReady = modifiedLobby.secondPlayerReady
+            .document(lobbyId)
+            .addSnapshotListener (MetadataChanges.INCLUDE) { snapshot, exception ->
+                var pending = snapshot!!.metadata.hasPendingWrites()
 
-                            if(firstPlayerReady && secondPlayerReady)
-                            {
-                                startGame()
-                            }
-                        }
-                    }
+                if(pending == false){
+                    var modifiedLobby = snapshot.toObject(
+                        Lobby::class.java
+                    )
+
+                     if(modifiedLobby!!.firstPlayerReady && modifiedLobby!!.secondPlayerReady)
+                     {
+                         startGame()
+                     }
                 }
             }
+
     }
 
     override fun onStop() {
@@ -159,6 +146,7 @@ class GameSetupActivity : AppCompatActivity() {
     {
         setup_gameView.renderLoop!!.running = false
         val intent = Intent(this, GameActivity::class.java)
+        intent.putExtra("lobbyId", lobbyId)
         startActivity(intent)
     }
 

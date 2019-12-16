@@ -20,11 +20,10 @@ import hu.bme.aut.android.torpedo.adapters.LobbyRecyclerViewAdapter
 import hu.bme.aut.android.torpedo.model.Lobby
 import kotlinx.android.synthetic.main.activity_browser.*
 
-class BrowserActivity : AppCompatActivity(), LobbyRecyclerViewAdapter.LobbyItemClickListener {
+class BrowserActivity : BaseActivity(), LobbyRecyclerViewAdapter.LobbyItemClickListener {
 
     private lateinit var registration: ListenerRegistration
     private lateinit var lobbyRecyclerViewAdapter: LobbyRecyclerViewAdapter
-    private lateinit var button_createLobby: Button
     val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,9 +45,8 @@ class BrowserActivity : AppCompatActivity(), LobbyRecyclerViewAdapter.LobbyItemC
     }
 
     override fun onItemClick(lobby: Lobby) {
-        val intent = Intent(this, LobbyActivity::class.java)
-        intent.putExtra("lobbyName", lobby.lobbyName)
-        intent.putExtra("oppName", lobby.firstPlayerName)
+        val intent = Intent(this, GameSetupActivity::class.java)
+        intent.putExtra("lobbyId", lobby.lobbyID)
         intent.putExtra("player", "second")
         startActivity(intent)
 
@@ -60,7 +58,6 @@ class BrowserActivity : AppCompatActivity(), LobbyRecyclerViewAdapter.LobbyItemC
             .addSnapshotListener { result, e ->
 
                 if (e != null) {
-                    //Log.w("LOBBY", "Listen failed.", e)
                     return@addSnapshotListener
                 }
                 for (change in result!!.documentChanges) {
@@ -90,27 +87,17 @@ class BrowserActivity : AppCompatActivity(), LobbyRecyclerViewAdapter.LobbyItemC
                 }
             }
 
-        button_createLobby = findViewById(R.id.createLobby) as Button
 
-        button_createLobby.setOnClickListener {
+        createLobby.setOnClickListener {
 
-            val lobby = hashMapOf(
-                "lobbyName" to "Lobby1",
-                "firstPlayerName" to "Axi",
-                "secondPlayerName" to "Andris",
+            val lobbyHash = hashMapOf(
+                "lobbyName" to "Lobby Name",
+                "firstPlayerName" to "",
+                "secondPlayerName" to "",
                 "hasPassword" to false,
                 "password" to "",
                 "firstPlayerReady" to false,
                 "secondPlayerReady" to false,
-                "gameID" to "Game1"
-
-            )
-            db.collection("lobbies").document("Lobby1").set(lobby)
-
-            val gameHash = hashMapOf(
-                "player1" to "Axi",
-                "player2" to "Andris",
-                "gameID" to "Game1",
                 "firstPlayerTurn" to true,
                 "squares" to "",
                 "squares2" to "",
@@ -118,13 +105,13 @@ class BrowserActivity : AppCompatActivity(), LobbyRecyclerViewAdapter.LobbyItemC
                 "squaresSeen2" to ""
             )
 
-            db.collection("games").document("Game1").set(gameHash)
+            var newLobby = db.collection("lobbies").document()
+            newLobby.set(lobbyHash)
 
-            val intent = Intent(this, LobbyActivity::class.java)
-            intent.putExtra("lobbyName", "Lobby1")
+            val intent = Intent(this, GameSetupActivity::class.java)
+            intent.putExtra("lobbyId", newLobby.id)
             intent.putExtra("player", "first")
             startActivity(intent)
-
         }
 
         super.onStart()

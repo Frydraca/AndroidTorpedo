@@ -15,7 +15,6 @@
         <activity android:name=".GameActivity" />
         <activity android:name=".GameSetupActivity" />
         <activity android:name=".LobbyActivity" />
-
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

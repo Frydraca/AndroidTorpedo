@@ -3,10 +3,7 @@ package hu.bme.aut.android.torpedo.rendering
 import android.content.Context
 import android.graphics.Canvas
 import android.util.Log
-import hu.bme.aut.android.torpedo.model.Background
-import hu.bme.aut.android.torpedo.model.EmptySquare
-import hu.bme.aut.android.torpedo.model.Game
-import hu.bme.aut.android.torpedo.model.Renderable
+import hu.bme.aut.android.torpedo.model.*
 import java.util.*
 
 class Renderer(
@@ -19,7 +16,7 @@ class Renderer(
 
     private val background = Background(context)
     val size = 130
-    var game = Game()
+    var lobby = Lobby()
     var showingSelfBoard: Boolean = true
     var isFirstPlayer: Boolean = false
     var gameStarted: Boolean = false
@@ -40,10 +37,10 @@ class Renderer(
                 emptyString += '0'
             }
         }
-        game.squares = emptyString
-        game.squares2 = emptyString
-        game.squaresSeen1 = emptyString
-        game.squaresSeen2 = emptyString
+        lobby.squares = emptyString
+        lobby.squares2 = emptyString
+        lobby.squaresSeen1 = emptyString
+        lobby.squaresSeen2 = emptyString
     }
 
     fun step() {
@@ -75,16 +72,6 @@ class Renderer(
         {
             activateSquareSetup(index)
         }
-    }
-
-    fun getbackGame() : Game
-    {
-        return game
-    }
-
-    fun setupGame(newGame: Game)
-    {
-        game = newGame
     }
 
     fun changeBoard(): Boolean
@@ -121,7 +108,7 @@ class Renderer(
         {
             for(square in newSquares)
             {
-                game.squares = game.squares!!.replaceRange(square, square+1, "4")
+                lobby.squares = lobby.squares!!.replaceRange(square, square+1, "4")
                 entitiesToDraw[square].setImage('4')
             }
         }
@@ -135,7 +122,7 @@ class Renderer(
             {
                 val index: Int = j + i*8
 
-                game.squares = game.squares!!.replaceRange(index, index+1, "0")
+                lobby.squares = lobby.squares!!.replaceRange(index, index+1, "0")
                 entitiesToDraw[index].setImage('0')
             }
         }
@@ -148,9 +135,9 @@ class Renderer(
             for(j in 0..7) // rows
             {
                 val index: Int = j + i*8
-                if(game.squares!![index] != '4')
+                if(lobby.squares!![index] != '4')
                 {
-                    game.squares = game.squares!!.replaceRange(index, index+1, "0")
+                    lobby.squares = lobby.squares!!.replaceRange(index, index+1, "0")
                     entitiesToDraw[index].setImage('0')
                 }
             }
@@ -166,7 +153,7 @@ class Renderer(
             for(j in 0..7) // rows
             {
                 val index: Int = j + i*8
-                if(game.squares!![index] == '2')
+                if(lobby.squares!![index] == '2')
                 {
                     greenSquares.add(index)
                 }
@@ -244,7 +231,7 @@ class Renderer(
             {
                 for(j in 0..7) // rows
                 {
-                    entitiesToDraw[i*8+j].setImage(game.squares!![i*8+j])
+                    entitiesToDraw[i*8+j].setImage(lobby.squares!![i*8+j])
                 }
             }
         }
@@ -254,7 +241,7 @@ class Renderer(
             {
                 for(j in 0..7) // rows
                 {
-                    entitiesToDraw[i*8+j].setImage(game.squares2!![i*8+j])
+                    entitiesToDraw[i*8+j].setImage(lobby.squares2!![i*8+j])
                 }
             }
         }
@@ -268,9 +255,9 @@ class Renderer(
             {
                 for(j in 0..7) // rows
                 {
-                    if(game.squaresSeen1!![i*8+j] == '1')
+                    if(lobby.squaresSeen1!![i*8+j] == '1')
                     {
-                        entitiesToDraw[i*8+j].setImage(game.squares2!![i*8+j])
+                        entitiesToDraw[i*8+j].setImage(lobby.squares2!![i*8+j])
                     }
                     else
                     {
@@ -285,9 +272,9 @@ class Renderer(
             {
                 for(j in 0..7) // rows
                 {
-                    if(game.squaresSeen2!![i*8+j] == '1')
+                    if(lobby.squaresSeen2!![i*8+j] == '1')
                     {
-                        entitiesToDraw[i*8+j].setImage(game.squares!![i*8+j])
+                        entitiesToDraw[i*8+j].setImage(lobby.squares!![i*8+j])
                     }
                     else
                     {
@@ -300,14 +287,14 @@ class Renderer(
 
     fun activateSquareSetup(index: Int)
     {
-        if( game.squares!![index] == '2')
+        if( lobby.squares!![index] == '2')
         {
-            game.squares = game.squares!!.replaceRange(index, index+1, "0")
+            lobby.squares = lobby.squares!!.replaceRange(index, index+1, "0")
             entitiesToDraw[index].setImage('0')
         }
-        else if (game.squares!![index] == '0')
+        else if (lobby.squares!![index] == '0')
         {
-            game.squares = game.squares!!.replaceRange(index, index+1, "2")
+            lobby.squares = lobby.squares!!.replaceRange(index, index+1, "2")
             entitiesToDraw[index].setImage('2')
         }
     }
@@ -316,27 +303,27 @@ class Renderer(
     {
         if(isFirstPlayer)
         {
-            if( game.squares2!![index] == '2')
+            if( lobby.squares2!![index] == '2')
             {
-                game.squares2 = game.squares2!!.replaceRange(index, index+1, "0")
+                lobby.squares2 = lobby.squares2!!.replaceRange(index, index+1, "0")
                 entitiesToDraw[index].setImage('0')
             }
-            else if (game.squaresSeen1!![index] != '1')
+            else if (lobby.squaresSeen1!![index] != '1')
             {
-                game.squares2 = game.squares2!!.replaceRange(index, index+1, "2")
+                lobby.squares2 = lobby.squares2!!.replaceRange(index, index+1, "2")
                 entitiesToDraw[index].setImage('2')
             }
         }
         else
         {
-            if( game.squares!![index] == '2')
+            if( lobby.squares!![index] == '2')
             {
-                game.squares = game.squares!!.replaceRange(index, index+1, "0")
+                lobby.squares = lobby.squares!!.replaceRange(index, index+1, "0")
                 entitiesToDraw[index].setImage('0')
             }
-            else if (game.squaresSeen2!![index] != '1')
+            else if (lobby.squaresSeen2!![index] != '1')
             {
-                game.squares = game.squares!!.replaceRange(index, index+1, "2")
+                lobby.squares = lobby.squares!!.replaceRange(index, index+1, "2")
                 entitiesToDraw[index].setImage('2')
             }
         }
@@ -352,5 +339,55 @@ class Renderer(
         }
 
         return false
+    }
+
+    fun checkForGameWon() : Boolean
+    {
+        if(isFirstPlayer)
+        {
+            for(index in 0..63)
+            {
+                if(lobby.squares2!![index] == '4')
+                {
+                    return false
+                }
+            }
+        }
+        else
+        {
+            for(index in 0..63)
+            {
+                if(lobby.squares!![index] == '4')
+                {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    fun checkForGameLost() : Boolean
+    {
+        if(isFirstPlayer)
+        {
+            for(index in 0..63)
+            {
+                if(lobby.squares!![index] == '4')
+                {
+                    return false
+                }
+            }
+        }
+        else
+        {
+            for(index in 0..63)
+            {
+                if(lobby.squares2!![index] == '4')
+                {
+                    return false
+                }
+            }
+        }
+        return true
     }
 }

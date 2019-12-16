@@ -5,10 +5,12 @@ class Lobby (
     var lobbyName: String? = null,
     var firstPlayerName: String? = null,
     var secondPlayerName: String? = null,
-    var hasPassword: Boolean = false,
-    var password: String? = null,
     var firstPlayerReady: Boolean = false,
     var secondPlayerReady: Boolean = false,
-    var gameID: String? = null
+    var firstPlayerTurn: Boolean = false,
+    var squares: String? = null,
+    var squares2: String? = null,
+    var squaresSeen1: String? = null,
+    var squaresSeen2: String? = null
 ){}
 

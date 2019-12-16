@@ -26,12 +26,27 @@
             android:text="Send" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/switch_gameboard"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center|bottom"
-        android:text="Switch gameboard" />
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/switch_gameboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Switch gameboard" />
+
+        <Button
+            android:id="@+id/board"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Your Board" />
+    </LinearLayout>
+
 
 
     <hu.bme.aut.android.torpedo.rendering.GameSetupView

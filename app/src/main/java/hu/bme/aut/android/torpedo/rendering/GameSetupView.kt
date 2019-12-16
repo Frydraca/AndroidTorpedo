@@ -46,7 +46,15 @@ class GameSetupView : SurfaceView {
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         super.onTouchEvent(event)
-        renderLoop!!.squareClicked(event!!.x, event!!.y)
+
+        var action = event!!.action
+        when(action)
+        {
+            MotionEvent.ACTION_DOWN -> {
+                renderLoop!!.squareClicked(event!!.x, event!!.y)
+            }
+        }
+
         return true
     }
 

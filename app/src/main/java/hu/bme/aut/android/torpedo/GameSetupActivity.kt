@@ -32,10 +32,8 @@ class GameSetupActivity : AppCompatActivity() {
         if(intent.getStringExtra("player") == "first")
         {
             firstplayer = true
+            setup_gameView.renderLoop!!.renderer.isFirstPlayer = true
         }
-
-
-        Log.w("DRAW","gamesetup started ${intent.getStringExtra("oppName")}")
 
         db.collection("lobbies").document(lobbyName!!)
             .get()
@@ -52,10 +50,6 @@ class GameSetupActivity : AppCompatActivity() {
 
             val game = setup_gameView.renderLoop!!.renderer.getbackGame()
 
-
-
-
-            val lName = lobbyName
             if(firstplayer)
             {
                 db.collection("games").document(gameName!!)
@@ -64,17 +58,18 @@ class GameSetupActivity : AppCompatActivity() {
                         var modifiedGame = document.toObject(
                             Game::class.java)
                         modifiedGame!!.squares = game.squares
+                        modifiedGame!!.squaresSeen1 = game.squaresSeen1
                         db.collection("games").document(gameName!!)
                             .set(modifiedGame)
                     }
 
-                db.collection("lobbies").document(lName!!)
+                db.collection("lobbies").document(lobbyName!!)
                     .get()
                     .addOnSuccessListener { document ->
                         var modifiedLobby = document.toObject(
                             Lobby::class.java)
                         modifiedLobby!!.firstPlayerReady = true
-                        db.collection("lobbies").document(lName!!)
+                        db.collection("lobbies").document(lobbyName!!)
                             .set(modifiedLobby)
                     }
             }
@@ -87,21 +82,47 @@ class GameSetupActivity : AppCompatActivity() {
                         var modifiedGame = document.toObject(
                             Game::class.java)
                         modifiedGame!!.squares2 = game.squares
+                        modifiedGame!!.squaresSeen2 = game.squaresSeen2
                         db.collection("games").document(gameName!!)
                             .set(modifiedGame)
                     }
 
-                db.collection("lobbies").document(lName!!)
+                db.collection("lobbies").document(lobbyName!!)
                     .get()
                     .addOnSuccessListener { document ->
                         var modifiedLobby = document.toObject(
                             Lobby::class.java)
                         modifiedLobby!!.secondPlayerReady = true
-                        db.collection("lobbies").document(lName!!)
+                        db.collection("lobbies").document(lobbyName!!)
                             .set(modifiedLobby)
                     }
             }
 
+        }
+
+        accept_button.setOnClickListener{
+            setup_gameView.renderLoop!!.renderer.fixShips()
+        }
+
+        reset_all_button.setOnClickListener{
+            setup_gameView.renderLoop!!.renderer.resetAll()
+        }
+
+        reset_ship_button.setOnClickListener{
+            setup_gameView.renderLoop!!.renderer.resetShip()
+        }
+
+        ship_5.setOnClickListener {
+            setup_gameView.renderLoop!!.renderer.shipTypePlaced = 5
+        }
+        ship_4.setOnClickListener {
+            setup_gameView.renderLoop!!.renderer.shipTypePlaced = 4
+        }
+        ship_3.setOnClickListener {
+            setup_gameView.renderLoop!!.renderer.shipTypePlaced = 3
+        }
+        ship_2.setOnClickListener {
+            setup_gameView.renderLoop!!.renderer.shipTypePlaced = 2
         }
     }
 

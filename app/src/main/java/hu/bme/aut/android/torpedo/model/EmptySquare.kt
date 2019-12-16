@@ -15,7 +15,7 @@ class EmptySquare(private val context: Context) : Renderable {
     private lateinit var bitmapDrawable: BitmapDrawable
 
     var image = BitmapFactory.decodeResource(context.resources, R.drawable.empty)
-    var state = 0 // 0 - empty, 1 - crossed, 2 - ship, 3 - shipcrossed
+    var state = '0' // 0 - empty, 1 - crossed, 2 - ship, 3 - shipcrossed, 4 - fixedShip
 
 
     override fun step() {
@@ -42,15 +42,27 @@ class EmptySquare(private val context: Context) : Renderable {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun setImage(newState: Int)
+    override fun setImage(newState: Char)
     {
-        if(newState == 0)
+        if(newState == '0')
         {
             image = BitmapFactory.decodeResource(context.resources, R.drawable.empty)
         }
-        else if(newState == 2)
+        else if(newState == '1')
+        {
+            image = BitmapFactory.decodeResource(context.resources, R.drawable.crossed)
+        }
+        else if(newState == '2')
         {
             image = BitmapFactory.decodeResource(context.resources, R.drawable.ship)
+        }
+        else if(newState == '3')
+        {
+            image = BitmapFactory.decodeResource(context.resources, R.drawable.ship_crossed)
+        }
+        else if(newState == '4')
+        {
+            image = BitmapFactory.decodeResource(context.resources, R.drawable.ship_fixed)
         }
 
     }

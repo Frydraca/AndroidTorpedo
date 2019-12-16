@@ -110,9 +110,12 @@ class BrowserActivity : AppCompatActivity(), LobbyRecyclerViewAdapter.LobbyItemC
             val gameHash = hashMapOf(
                 "player1" to "Axi",
                 "player2" to "Andris",
+                "gameID" to "Game1",
                 "firstPlayerTurn" to true,
                 "squares" to "",
-                "squares2" to ""
+                "squares2" to "",
+                "squaresSeen1" to "",
+                "squaresSeen2" to ""
             )
 
             db.collection("games").document("Game1").set(gameHash)

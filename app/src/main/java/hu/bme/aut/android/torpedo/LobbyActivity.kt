@@ -33,8 +33,6 @@ class LobbyActivity : AppCompatActivity() {
         {
             firstplayer = true
         }
-        Log.w("DRAW","lobbyname create ${lobbyName}")
-        Log.w("DRAW","intent ${intent.getStringExtra("oppName")}")
 
         lobby_readyButton.setOnClickListener {
             Log.w("DRAW","ready pressed")
@@ -51,12 +49,9 @@ class LobbyActivity : AppCompatActivity() {
                         db.collection("lobbies").document(lName!!)
                             .set(modifiedLobby)
                     }
-                Log.w("DRAW","readyfirst ")
             }
             else
             {
-                Log.w("DRAW","ready secondplayer")
-                Log.w("DRAW","ready second ${lName}")
                 db.collection("lobbies").document(lName!!)
                     .get()
                     .addOnSuccessListener { document ->
@@ -66,7 +61,6 @@ class LobbyActivity : AppCompatActivity() {
                         db.collection("lobbies").document(lName!!)
                             .set(modifiedLobby)
                     }
-                Log.w("DRAW","ready second")
             }
         }
 
@@ -81,19 +75,15 @@ class LobbyActivity : AppCompatActivity() {
                 for (change in result!!.documentChanges) {
                     when (change.type) {
                         DocumentChange.Type.MODIFIED -> {
-                            Log.w("DRAW","modified ")
                             var modifiedLobby = change.document.toObject(
                                 Lobby::class.java
                             )
-                            Log.w("DRAW","got modified ")
                             lobby_text.text = modifiedLobby.secondPlayerName
                             firstPlayerReady = modifiedLobby.firstPlayerReady
                             secondPlayerReady = modifiedLobby.secondPlayerReady
 
                             if(firstPlayerReady && secondPlayerReady)
                             {
-                                Log.w("DRAW","start next activity")
-
                                 startGame(modifiedLobby)
                             }
                         }

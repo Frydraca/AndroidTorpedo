@@ -40,7 +40,7 @@ class Background(private val context: Context) : Renderable {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun setImage(newState: Int) {
+    override fun setImage(newState: Char) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

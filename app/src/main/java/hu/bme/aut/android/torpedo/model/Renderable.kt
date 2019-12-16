@@ -7,5 +7,5 @@ interface Renderable {
     fun setSize(x: Int, y: Int)
     fun render(canvas: Canvas)
     fun setPosition(left: Int, top: Int, right: Int, bottom: Int)
-    fun setImage(newState: Int)
+    fun setImage(newState: Char)
 }

@@ -54,6 +54,8 @@ class BrowserActivity : BaseActivity(), LobbyRecyclerViewAdapter.LobbyItemClickL
 
     override  fun onStart()
     {
+        super.onStart()
+
         registration = db.collection("lobbies")
             .addSnapshotListener { result, e ->
 
@@ -87,11 +89,12 @@ class BrowserActivity : BaseActivity(), LobbyRecyclerViewAdapter.LobbyItemClickL
                 }
             }
 
-
         createLobby.setOnClickListener {
 
+            var newLobby = db.collection("lobbies").document()
             val lobbyHash = hashMapOf(
                 "lobbyName" to "Lobby Name",
+                "lobbyID" to newLobby.id,
                 "firstPlayerName" to "",
                 "secondPlayerName" to "",
                 "hasPassword" to false,
@@ -105,7 +108,6 @@ class BrowserActivity : BaseActivity(), LobbyRecyclerViewAdapter.LobbyItemClickL
                 "squaresSeen2" to ""
             )
 
-            var newLobby = db.collection("lobbies").document()
             newLobby.set(lobbyHash)
 
             val intent = Intent(this, GameSetupActivity::class.java)
@@ -114,7 +116,6 @@ class BrowserActivity : BaseActivity(), LobbyRecyclerViewAdapter.LobbyItemClickL
             startActivity(intent)
         }
 
-        super.onStart()
     }
     override fun onStop() {
         registration.remove()

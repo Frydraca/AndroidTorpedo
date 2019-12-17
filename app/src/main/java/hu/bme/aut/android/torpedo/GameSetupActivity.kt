@@ -21,19 +21,22 @@ class GameSetupActivity : BaseActivity() {
     val db = FirebaseFirestore.getInstance()
     var lobbyId: String = ""
     var firstplayer: Boolean = false
-    var firstPlayerReady: Boolean = false
-    var secondPlayerReady: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_setup)
 
-        lobbyId = intent.getStringExtra("lobbyId")!!
-        if(intent.getStringExtra("player") == "first")
+        Log.w("GAME", "extraInput")
+                if(intent.getStringExtra("player") == "first")
         {
+            Log.w("GAME", "If succeded")
             firstplayer = true
-            setup_gameView.renderLoop!!.renderer.isFirstPlayer = true
+            setup_gameView.isFirstPlayer = true
         }
+
+        lobbyId = intent.getStringExtra("lobbyId")!!
+
+        Log.w("GAME", "reset ready")
 
         db.collection("lobbies").document(lobbyId)
             .get()
@@ -45,6 +48,8 @@ class GameSetupActivity : BaseActivity() {
                 db.collection("lobbies").document(lobbyId)
                     .set(modifiedLobby)
             }
+
+        Log.w("GAME", "ready")
 
         setup_readyButton.setOnClickListener {
 
@@ -90,6 +95,8 @@ class GameSetupActivity : BaseActivity() {
 
         }
 
+        Log.w("GAME", "listener")
+
         accept_button.setOnClickListener{
             setup_gameView.renderLoop!!.renderer.fixShips()
         }
@@ -118,23 +125,29 @@ class GameSetupActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
+
+
+
+        Log.w("GAME", "start")
         registration = db.collection("lobbies")
-            .document(lobbyId)
-            .addSnapshotListener (MetadataChanges.INCLUDE) { snapshot, exception ->
-                var pending = snapshot!!.metadata.hasPendingWrites()
+            .whereEqualTo("lobbyID", lobbyId)
+            .addSnapshotListener  { result, exception ->
 
-                if(pending == false){
-                    var modifiedLobby = snapshot.toObject(
-                        Lobby::class.java
-                    )
+                for (dc in result!!.documentChanges) {
+                    when (dc.type) {
+                        DocumentChange.Type.MODIFIED -> {
+                            var modifiedLobby = dc.document.toObject(
+                                Lobby::class.java
+                            )
 
-                     if(modifiedLobby!!.firstPlayerReady && modifiedLobby!!.secondPlayerReady)
-                     {
-                         startGame()
-                     }
+                            if(modifiedLobby!!.firstPlayerReady && modifiedLobby!!.secondPlayerReady)
+                            {
+                                startGame()
+                            }
+                        }
+                    }
                 }
             }
-
     }
 
     override fun onStop() {

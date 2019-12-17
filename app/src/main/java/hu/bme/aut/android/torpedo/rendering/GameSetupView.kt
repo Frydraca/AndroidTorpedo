@@ -2,10 +2,10 @@ package hu.bme.aut.android.torpedo.rendering
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import hu.bme.aut.android.torpedo.R
 
 class GameSetupView : SurfaceView {
 
@@ -13,11 +13,13 @@ class GameSetupView : SurfaceView {
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
+    var isFirstPlayer = false
     var renderLoop: RenderLoop? = null
 
     init {
         holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceCreated(holder: SurfaceHolder) {
+                 Log.w("GAME", "Surface created")
                 // empty
             }
 
@@ -35,11 +37,14 @@ class GameSetupView : SurfaceView {
             }
 
             override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
+
+                Log.w("GAME", "renderloop init")
                 val loop = RenderLoop(context, this@GameSetupView, width, height)
                 loop.running = true
                 loop.start()
 
                 renderLoop = loop
+                renderLoop!!.renderer.isFirstPlayer = isFirstPlayer
             }
         })
     }

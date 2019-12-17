@@ -7,6 +7,7 @@ import android.widget.Toast
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.messaging.FirebaseMessaging
 import hu.bme.aut.android.torpedo.model.Game
 import hu.bme.aut.android.torpedo.model.Lobby
@@ -124,30 +125,31 @@ class GameActivity : BaseActivity() {
     {
         super.onStart()
         registration = db.collection("lobbies")
-            .whereEqualTo("id", lobbyId)
-            .addSnapshotListener { result, e ->
-                for (change in result!!.documentChanges) {
-                    when (change.type) {
+            .whereEqualTo("lobbyID", lobbyId)
+            .addSnapshotListener  { result, exception ->
+                for (dc in result!!.documentChanges) {
+                    when (dc.type) {
                         DocumentChange.Type.MODIFIED -> {
-                            var modifiedLobby = change.document.toObject(
+                            var modifiedLobby = dc.document.toObject(
                                 Lobby::class.java
                             )
-                            gameView.renderLoop!!.renderer.lobby = modifiedLobby!!
-                            if (gameView.renderLoop!!.renderer.checkForGameWon()) {
+
+                            if (gameView.renderLoop!!.renderer.checkForGameWon(modifiedLobby!!)) {
                                 // game ended you won
                                 Toast.makeText(this@GameActivity, "You won!", Toast.LENGTH_SHORT).show()
                             }
-                            if (gameView.renderLoop!!.renderer.checkForGameLost())
+                            if (gameView.renderLoop!!.renderer.checkForGameLost(modifiedLobby!!))
                             {
                                 // game ended you lost
                                 Toast.makeText(this@GameActivity, "You lost!", Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
-
                 }
             }
-        FirebaseMessaging.getInstance().subscribeToTopic("Game1")
+
+
+        FirebaseMessaging.getInstance().subscribeToTopic(lobbyId)
             .addOnCompleteListener {
                 Log.w("GAME", "onstop")
 
@@ -163,5 +165,10 @@ class GameActivity : BaseActivity() {
     override fun onDestroy() {
         Log.w("LOBBY", "ondestroy")
         super.onDestroy()
+    }
+
+    fun goBackToBrowser()
+    {
+
     }
 }

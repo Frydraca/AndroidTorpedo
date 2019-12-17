@@ -28,11 +28,9 @@ class Renderer(
         {
             for(j in 0..7) // rows
             {
-                val index = i*8+j
                 val square = EmptySquare(context)
                 square.setPosition(0+i*size,0+j*size, (1+i)*size, (1+j)*size)
 
-//                square.state = game.squares!![index]
                 entitiesToDraw.add(square)
                 emptyString += '0'
             }
@@ -341,7 +339,7 @@ class Renderer(
         return false
     }
 
-    fun checkForGameWon() : Boolean
+    fun checkForGameWon(lobby: Lobby) : Boolean
     {
         if(isFirstPlayer)
         {
@@ -366,7 +364,7 @@ class Renderer(
         return true
     }
 
-    fun checkForGameLost() : Boolean
+    fun checkForGameLost(lobby: Lobby) : Boolean
     {
         if(isFirstPlayer)
         {

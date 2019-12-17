@@ -20,23 +20,26 @@ class GameSetupActivity : BaseActivity() {
     private lateinit var registration: ListenerRegistration
     val db = FirebaseFirestore.getInstance()
     var lobbyId: String = ""
+    var playerName = "Waiting for opponent"
     var firstplayer: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_setup)
 
-        Log.w("GAME", "extraInput")
-                if(intent.getStringExtra("player") == "first")
+        if(intent.getStringExtra("player") == "first")
         {
-            Log.w("GAME", "If succeded")
             firstplayer = true
             setup_gameView.isFirstPlayer = true
         }
 
         lobbyId = intent.getStringExtra("lobbyId")!!
+        if(intent.getStringExtra("playerName") != "")
+        {
+            playerName = intent.getStringExtra("playerName")!!
 
-        Log.w("GAME", "reset ready")
+        }
+
 
         db.collection("lobbies").document(lobbyId)
             .get()
@@ -45,11 +48,11 @@ class GameSetupActivity : BaseActivity() {
                     Lobby::class.java)
                 modifiedLobby!!.firstPlayerReady = false
                 modifiedLobby!!.secondPlayerReady = false
+                modifiedLobby!!.secondPlayerName = playerName
                 db.collection("lobbies").document(lobbyId)
                     .set(modifiedLobby)
             }
 
-        Log.w("GAME", "ready")
 
         setup_readyButton.setOnClickListener {
 
@@ -95,7 +98,6 @@ class GameSetupActivity : BaseActivity() {
 
         }
 
-        Log.w("GAME", "listener")
 
         accept_button.setOnClickListener{
             setup_gameView.renderLoop!!.renderer.fixShips()
@@ -126,9 +128,6 @@ class GameSetupActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
 
-
-
-        Log.w("GAME", "start")
         registration = db.collection("lobbies")
             .whereEqualTo("lobbyID", lobbyId)
             .addSnapshotListener  { result, exception ->

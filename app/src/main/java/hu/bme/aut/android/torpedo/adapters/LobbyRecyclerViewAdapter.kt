@@ -20,9 +20,8 @@ class LobbyRecyclerViewAdapter() : RecyclerView.Adapter<LobbyRecyclerViewAdapter
     var itemClickListener: LobbyItemClickListener? = null
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvTitle: TextView = itemView.lobbyName
         val tvBody: TextView = itemView.hostName
-        val tvButton: Button = itemView.joinButton
+        val tvSecond: TextView = itemView.SecondName
 
         var lobby: Lobby? = null
         init {
@@ -43,8 +42,8 @@ class LobbyRecyclerViewAdapter() : RecyclerView.Adapter<LobbyRecyclerViewAdapter
         val tmpLobby = lobbyList[position]
         viewHolder.lobby = tmpLobby
 
-        viewHolder.tvTitle.text = tmpLobby.lobbyName
         viewHolder.tvBody.text = tmpLobby.firstPlayerName
+        viewHolder.tvSecond.text = tmpLobby.secondPlayerName
 
     }
 

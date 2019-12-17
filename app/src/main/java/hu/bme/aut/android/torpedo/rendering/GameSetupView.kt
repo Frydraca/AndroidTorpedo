@@ -18,10 +18,6 @@ class GameSetupView : SurfaceView {
 
     init {
         holder.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceCreated(holder: SurfaceHolder) {
-                 Log.w("GAME", "Surface created")
-                // empty
-            }
 
             override fun surfaceDestroyed(holder: SurfaceHolder) {
                 var retry = true
@@ -38,7 +34,6 @@ class GameSetupView : SurfaceView {
 
             override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
 
-                Log.w("GAME", "renderloop init")
                 val loop = RenderLoop(context, this@GameSetupView, width, height)
                 loop.running = true
                 loop.start()

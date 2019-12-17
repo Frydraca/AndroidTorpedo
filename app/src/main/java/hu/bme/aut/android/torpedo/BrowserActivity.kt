@@ -47,6 +47,7 @@ class BrowserActivity : BaseActivity(), LobbyRecyclerViewAdapter.LobbyItemClickL
     override fun onItemClick(lobby: Lobby) {
         val intent = Intent(this, GameSetupActivity::class.java)
         intent.putExtra("lobbyId", lobby.lobbyID)
+        intent.putExtra("playerName", userEmail)
         intent.putExtra("player", "second")
         startActivity(intent)
 
@@ -95,8 +96,8 @@ class BrowserActivity : BaseActivity(), LobbyRecyclerViewAdapter.LobbyItemClickL
             val lobbyHash = hashMapOf(
                 "lobbyName" to "Lobby Name",
                 "lobbyID" to newLobby.id,
-                "firstPlayerName" to "",
-                "secondPlayerName" to "",
+                "firstPlayerName" to userEmail,
+                "secondPlayerName" to "Waiting for opponent",
                 "hasPassword" to false,
                 "password" to "",
                 "firstPlayerReady" to false,
@@ -112,6 +113,7 @@ class BrowserActivity : BaseActivity(), LobbyRecyclerViewAdapter.LobbyItemClickL
 
             val intent = Intent(this, GameSetupActivity::class.java)
             intent.putExtra("lobbyId", newLobby.id)
+            intent.putExtra("playerName", "")
             intent.putExtra("player", "first")
             startActivity(intent)
         }
